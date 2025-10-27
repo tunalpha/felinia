@@ -10,6 +10,8 @@ import React, { useMemo, useState } from "react";
 // Verde petrolio: #0C7463  | Oro tenue: #D6B36A  | Sabbia: #F5EFE7  | Nero soft: #1E1E1E
 const PAYPAL_URL = "https://www.paypal.com/donate?hosted_button_id=YOUR_ID"; // TODO: sostituisci con ID reale
 const WHATSAPP_LINK = "https://wa.me/393488450532?text=Ciao%20F%C3%A9linia!%20Scrivo%20per%20Enrico."; // bottone contatto fondatore
+const CONTACT_EMAIL = "feliniasite@gmail.com";
+const CONTACT_ENDPOINT = "https://formsubmit.co/ajax/feliniasite@gmail.com";
 
 const translations = {
   it: {
@@ -59,7 +61,15 @@ const translations = {
     contact: {
       title: "Contattaci",
       subtitle: "Parliamone – rispondiamo in IT/FR/EN.",
-      form: { name: "Nome", email: "Email", message: "Messaggio", send: "Invia" },
+      email: { label: "Email", address: CONTACT_EMAIL, aria: "Scrivi una email a Félinia" },
+      phones: [
+        { label: "Tunisia", display: "+216 56059142", href: "+21656059142" },
+        { label: "Italia", display: "+39 348 8450532", href: "+393488450532" },
+      ],
+      form: { name: "Nome", email: "Email", message: "Messaggio", send: "Invia", sending: "Invio in corso..." },
+      mailSuccess: "Grazie! La tua richiesta è stata inviata a feliniasite@gmail.com.",
+      mailError: "Si è verificato un problema. Scrivici direttamente a feliniasite@gmail.com.",
+      mailSending: "Invio in corso...",
       legal: "Iscrizione associazione in Italia · Rifugio operativo in Tunisia",
     },
     footer: {
@@ -119,7 +129,15 @@ const translations = {
     contact: {
       title: "Contactez‑nous",
       subtitle: "Échangeons – réponses en FR/IT/EN.",
-      form: { name: "Nom", email: "Email", message: "Message", send: "Envoyer" },
+      email: { label: "E-mail", address: CONTACT_EMAIL, aria: "Écrire un e-mail à Félinia" },
+      phones: [
+        { label: "Tunisie", display: "+216 56059142", href: "+21656059142" },
+        { label: "Italie", display: "+39 348 8450532", href: "+393488450532" },
+      ],
+      form: { name: "Nom", email: "Email", message: "Message", send: "Envoyer", sending: "Envoi en cours..." },
+      mailSuccess: "Merci ! Votre demande a été envoyée à feliniasite@gmail.com.",
+      mailError: "Un problème est survenu. Écrivez-nous directement à feliniasite@gmail.com.",
+      mailSending: "Envoi en cours...",
       legal: "Association enregistrée en Italie · Refuge opérant en Tunisie",
     },
     footer: {
@@ -179,7 +197,15 @@ const translations = {
     contact: {
       title: "Get in touch",
       subtitle: "Let's talk – replies in EN/IT/FR.",
-      form: { name: "Name", email: "Email", message: "Message", send: "Send" },
+      email: { label: "Email", address: CONTACT_EMAIL, aria: "Email Félinia" },
+      phones: [
+        { label: "Tunisia", display: "+216 56059142", href: "+21656059142" },
+        { label: "Italy", display: "+39 348 8450532", href: "+393488450532" },
+      ],
+      form: { name: "Name", email: "Email", message: "Message", send: "Send", sending: "Sending..." },
+      mailSuccess: "Thank you! Your request has been delivered to feliniasite@gmail.com.",
+      mailError: "Something went wrong. Please email us directly at feliniasite@gmail.com.",
+      mailSending: "Sending...",
       legal: "Association registered in Italy · Shelter operating in Tunisia",
     },
     footer: {
@@ -210,7 +236,48 @@ function CatLogo({ className = "w-10 h-10" }) {
 
 export default function FeliniaLanding() {
   const [lang, setLang] = useState("it");
+  const [formState, setFormState] = useState("idle");
   const t = useMemo(() => translations[lang], [lang]);
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = (formData.get("name") || "").toString().trim();
+    const email = (formData.get("email") || "").toString().trim();
+    const message = (formData.get("message") || "").toString().trim();
+
+    setFormState("loading");
+
+    try {
+      const response = await fetch(CONTACT_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      setFormState("success");
+      e.currentTarget.reset();
+    } catch (error) {
+      console.error("Contact form submission failed", error);
+      setFormState("error");
+    }
+  };
+
+  const formFeedback =
+    formState === "success"
+      ? t.contact.mailSuccess
+      : formState === "error"
+      ? t.contact.mailError
+      : formState === "loading"
+      ? t.contact.mailSending
+      : "";
 
   return (
     <div className="min-h-screen bg-[#F5EFE7] text-[#1E1E1E]">
@@ -229,7 +296,7 @@ export default function FeliniaLanding() {
             <a href="#help" className="hover:text-[#0C7463]">{t.nav.help}</a>
             <a href="#contact" className="hover:text-[#0C7463]">{t.nav.contact}</a>
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             <select
               aria-label="switch language"
               value={lang}
@@ -240,9 +307,6 @@ export default function FeliniaLanding() {
               <option value="fr">FR</option>
               <option value="en">EN</option>
             </select>
-            <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#0C7463] text-white px-3 py-1.5 text-sm hover:opacity-90">
-              {t.hero.ctaSecondary}
-            </a>
           </div>
         </div>
       </header>
@@ -460,37 +524,68 @@ export default function FeliniaLanding() {
             <div className="mt-6 rounded-2xl bg-white p-6 border border-black/5 text-sm">
               <div className="font-medium">Félinia – NGO</div>
               <div className="mt-1">{t.location}</div>
-              <div className="mt-2">✉️ hello@felinia.org</div>
-              <div className="">☎️ +216 00 000 000 (TN) · +39 000 000 000 (IT)</div>
+              <a
+                href={`mailto:${t.contact.email.address}`}
+                className="mt-2 inline-flex items-center gap-2 text-[#0C7463] hover:underline"
+                aria-label={t.contact.email.aria}
+              >
+                <span>✉️</span>
+                <span>{t.contact.email.address}</span>
+              </a>
+              <div className="mt-2 flex flex-col gap-1">
+                {t.contact.phones.map((phone) => (
+                  <a
+                    key={phone.href}
+                    href={`tel:${phone.href}`}
+                    className="hover:text-[#0C7463]"
+                    aria-label={`${phone.display} ${phone.label}`}
+                  >
+                    ☎️ {phone.display} ({phone.label})
+                  </a>
+                ))}
+              </div>
               <div className="mt-2 opacity-70">{t.contact.legal}</div>
             </div>
           </div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert(
-                lang === "it"
-                  ? "Grazie! Ti risponderemo al più presto."
-                  : lang === "fr"
-                  ? "Merci ! Nous vous répondrons au plus vite."
-                  : "Thanks! We'll get back to you soon."
-              );
-            }}
-            className="rounded-2xl bg-white p-6 border border-black/5"
-          >
+          <form onSubmit={handleContactSubmit} className="rounded-2xl bg-white p-6 border border-black/5 space-y-4">
             <label className="block text-sm">
               {t.contact.form.name}
-              <input className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40" required />
+              <input
+                name="name"
+                className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40"
+                required
+              />
             </label>
-            <label className="block text-sm mt-4">
+            <label className="block text-sm">
               {t.contact.form.email}
-              <input type="email" className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40" required />
+              <input
+                name="email"
+                type="email"
+                className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40"
+                required
+              />
             </label>
-            <label className="block text-sm mt-4">
+            <label className="block text-sm">
               {t.contact.form.message}
-              <textarea rows={4} className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40" required />
+              <textarea
+                name="message"
+                rows={4}
+                className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40"
+                required
+              />
             </label>
-            <button className="mt-5 rounded-xl bg-[#0C7463] text-white px-5 py-2.5 text-sm hover:opacity-90">{t.contact.form.send}</button>
+            <button
+              type="submit"
+              className="rounded-xl bg-[#0C7463] text-white px-5 py-2.5 text-sm hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={formState === "loading"}
+            >
+              {formState === "loading" ? t.contact.form.sending : t.contact.form.send}
+            </button>
+            {formFeedback && (
+              <div className="text-sm" role="status" aria-live="polite">
+                {formFeedback}
+              </div>
+            )}
           </form>
         </div>
       </section>
