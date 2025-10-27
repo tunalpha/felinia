@@ -1,14 +1,16 @@
 import React, { useMemo, useState } from "react";
+import logoUrl from "/logo-felinia.png";
 
 /**
  * Félinia – Landing page multilingue IT/FR/EN
  * Include sezione "Chi siamo / À propos / About" con descrizione emozionante
- * PayPal integrato via PAYPAL_URL (sostituire l'ID reale)
+ * Pagamenti donazioni gestiti via DONATION_URL (sostituire la key quando necessario)
  */
 
-// Palette brand e PayPal
+// Palette brand e link donazioni
 // Verde petrolio: #0C7463  | Oro tenue: #D6B36A  | Sabbia: #F5EFE7  | Nero soft: #1E1E1E
-const PAYPAL_URL = "https://www.paypal.com/donate?hosted_button_id=YOUR_ID"; // TODO: sostituisci con ID reale
+const DONATION_URL =
+  "https://app.alphabitpay.com/payment/create?apiKey=b661ea0b9726a31cde23506563c71675b33470f2024b27431a070448b25200ff&source=external";
 const WHATSAPP_LINK = "https://wa.me/393488450532?text=Ciao%20F%C3%A9linia!%20Scrivo%20per%20Enrico."; // bottone contatto fondatore
 
 const translations = {
@@ -206,20 +208,6 @@ const translations = {
   },
 };
 
-function CatLogo({ className = "w-10 h-10" }) {
-  return (
-    <svg className={className} viewBox="0 0 64 64" fill="none" role="img" aria-label="Félinia logo">
-      <path
-        d="M20 22c1.5-4 5-8 12-8s10.5 4 12 8m-24 0c-4 2-6 6-6 10 0 8 6 12 10 14 3 2 2 6 0 8m20-32c4 2 6 6 6 10 0 8-6 12-10 14-3 2-2 6 0 8"
-        stroke="#0C7463" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-      />
-      <circle cx="26" cy="26" r="1.5" fill="#0C7463" />
-      <circle cx="38" cy="26" r="1.5" fill="#0C7463" />
-      <path d="M26 34c4 3 8 3 12 0" stroke="#0C7463" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export default function FeliniaLanding() {
   const [lang, setLang] = useState("it");
   const t = useMemo(() => translations[lang], [lang]);
@@ -230,7 +218,7 @@ export default function FeliniaLanding() {
       <header className="sticky top-0 z-20 backdrop-blur bg-[#F5EFE7]/80 border-b border-black/5">
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <CatLogo className="w-9 h-9" />
+            <img src={logoUrl} alt="Félinia logo" className="h-9 w-9 object-contain" />
             <span className="font-serif text-2xl tracking-wide text-[#0C7463]">Félinia</span>
             <span className="ml-3 rounded-full bg-[#0C7463]/10 text-[#0C7463] text-xs px-2 py-1">{t.badge}</span>
           </div>
@@ -252,7 +240,7 @@ export default function FeliniaLanding() {
               <option value="fr">FR</option>
               <option value="en">EN</option>
             </select>
-            <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#0C7463] text-white px-3 py-1.5 text-sm hover:opacity-90">
+            <a href={DONATION_URL} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#0C7463] text-white px-3 py-1.5 text-sm hover:opacity-90">
               {t.hero.ctaSecondary}
             </a>
           </div>
@@ -270,7 +258,7 @@ export default function FeliniaLanding() {
               <a href="#adopt" className="rounded-2xl bg-[#0C7463] text-white px-5 py-3 text-sm md:text-base shadow-sm hover:shadow">
                 {t.hero.ctaPrimary}
               </a>
-              <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="rounded-2xl border border-[#0C7463] text-[#0C7463] px-5 py-3 text-sm md:text-base hover:bg-white">
+              <a href={DONATION_URL} target="_blank" rel="noopener noreferrer" className="rounded-2xl border border-[#0C7463] text-[#0C7463] px-5 py-3 text-sm md:text-base hover:bg-white">
                 {t.hero.ctaSecondary}
               </a>
             </div>
@@ -279,7 +267,7 @@ export default function FeliniaLanding() {
           {/* Hero card */}
           <div className="bg-white/70 rounded-3xl p-6 md:p-8 shadow-sm border border-black/5">
             <div className="flex items-center gap-3">
-              <CatLogo className="w-8 h-8" />
+              <img src={logoUrl} alt="Félinia logo" className="h-8 w-8 object-contain" />
               <div className="font-medium">Félinia Care</div>
             </div>
             <p className="mt-3 text-sm">
@@ -332,7 +320,7 @@ export default function FeliniaLanding() {
         <div className="mx-auto max-w-7xl px-4 py-16 grid md:grid-cols-2 gap-10 items-center">
           <div className="rounded-3xl bg-white p-6 border border-black/5">
             <div className="flex items-center gap-3">
-              <CatLogo className="w-10 h-10" />
+              <img src={logoUrl} alt="Félinia logo" className="h-10 w-10 object-contain" />
               <h2 className="font-serif text-3xl text-[#0C7463]">{t.about.title}</h2>
             </div>
             <p className="mt-4 text-lg leading-relaxed">{t.about.p1}</p>
@@ -440,7 +428,7 @@ export default function FeliniaLanding() {
               <div key={i} className="rounded-2xl bg-white p-6 border border-black/5 flex flex-col">
                 <div className="font-semibold">{c.t}</div>
                 <p className="mt-2 text-sm opacity-80 flex-1">{c.d}</p>
-                <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="mt-4 rounded-xl bg-[#0C7463] text-white px-4 py-2 text-sm text-center hover:opacity-90">
+                <a href={DONATION_URL} target="_blank" rel="noopener noreferrer" className="mt-4 rounded-xl bg-[#0C7463] text-white px-4 py-2 text-sm text-center hover:opacity-90">
                   {c.btn}
                 </a>
               </div>
@@ -451,7 +439,7 @@ export default function FeliniaLanding() {
 
       {/* Donate anchor */}
       <div id="donate" className="mx-auto max-w-7xl px-4 pt-10 text-sm">
-        <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="inline-block rounded-xl bg-[#0C7463] text-white px-5 py-3">
+        <a href={DONATION_URL} target="_blank" rel="noopener noreferrer" className="inline-block rounded-xl bg-[#0C7463] text-white px-5 py-3">
           {t.paypalCta}
         </a>
         <p className="mt-3 opacity-70">
@@ -523,7 +511,7 @@ export default function FeliniaLanding() {
         <div className="mx-auto max-w-7xl px-4 py-8 grid md:grid-cols-3 gap-6 text-sm">
           <div>
             <div className="flex items-center gap-2">
-              <CatLogo className="w-6 h-6" />
+              <img src={logoUrl} alt="Félinia logo" className="h-6 w-6 object-contain" />
               <span className="font-medium">Félinia</span>
             </div>
             <p className="mt-2 opacity-70 max-w-sm">
@@ -536,7 +524,7 @@ export default function FeliniaLanding() {
           </div>
           <div className="space-y-1">
             <div className="font-medium">{t.nav.help}</div>
-            <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="block hover:text-[#0C7463]">{t.hero.ctaSecondary}</a>
+            <a href={DONATION_URL} target="_blank" rel="noopener noreferrer" className="block hover:text-[#0C7463]">{t.hero.ctaSecondary}</a>
             <a href="#adopt" className="block hover:text-[#0C7463]">{t.nav.adopt}</a>
             <a href="#contact" className="block hover:text-[#0C7463]">{t.nav.contact}</a>
           </div>
