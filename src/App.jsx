@@ -241,7 +241,7 @@ export default function FeliniaLanding() {
             <a href="#help" className="hover:text-[#0C7463]">{t.nav.help}</a>
             <a href="#contact" className="hover:text-[#0C7463]">{t.nav.contact}</a>
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             <select
               aria-label="switch language"
               value={lang}
@@ -252,9 +252,6 @@ export default function FeliniaLanding() {
               <option value="fr">FR</option>
               <option value="en">EN</option>
             </select>
-            <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#0C7463] text-white px-3 py-1.5 text-sm hover:opacity-90">
-              {t.hero.ctaSecondary}
-            </a>
           </div>
         </div>
       </header>
