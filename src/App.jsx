@@ -10,6 +10,7 @@ import React, { useMemo, useState } from "react";
 // Verde petrolio: #0C7463  | Oro tenue: #D6B36A  | Sabbia: #F5EFE7  | Nero soft: #1E1E1E
 const PAYPAL_URL = "https://www.paypal.com/donate?hosted_button_id=YOUR_ID"; // TODO: sostituisci con ID reale
 const WHATSAPP_LINK = "https://wa.me/393488450532?text=Ciao%20F%C3%A9linia!%20Scrivo%20per%20Enrico."; // bottone contatto fondatore
+const CONTACT_EMAIL = "feliniasite@gmail.com";
 
 const translations = {
   it: {
@@ -59,7 +60,15 @@ const translations = {
     contact: {
       title: "Contattaci",
       subtitle: "Parliamone – rispondiamo in IT/FR/EN.",
+      email: { label: "Email", address: CONTACT_EMAIL, aria: "Scrivi una email a Félinia" },
+      phones: [
+        { label: "Tunisia", display: "+216 56059142", href: "+21656059142" },
+        { label: "Italia", display: "+39 348 8450532", href: "+393488450532" },
+      ],
       form: { name: "Nome", email: "Email", message: "Messaggio", send: "Invia" },
+      mailSubject: "Nuova richiesta dal sito Félinia",
+      mailBodyIntro: "Hai ricevuto un nuovo messaggio dal modulo contatti di Félinia.",
+      mailClientPrompt: "Abbiamo aperto il tuo client email per inviare la richiesta a feliniasite@gmail.com.",
       legal: "Iscrizione associazione in Italia · Rifugio operativo in Tunisia",
     },
     footer: {
@@ -119,7 +128,15 @@ const translations = {
     contact: {
       title: "Contactez‑nous",
       subtitle: "Échangeons – réponses en FR/IT/EN.",
+      email: { label: "E-mail", address: CONTACT_EMAIL, aria: "Écrire un e-mail à Félinia" },
+      phones: [
+        { label: "Tunisie", display: "+216 56059142", href: "+21656059142" },
+        { label: "Italie", display: "+39 348 8450532", href: "+393488450532" },
+      ],
       form: { name: "Nom", email: "Email", message: "Message", send: "Envoyer" },
+      mailSubject: "Nouvelle demande depuis le site Félinia",
+      mailBodyIntro: "Vous avez reçu un nouveau message du formulaire de contact de Félinia.",
+      mailClientPrompt: "Nous avons ouvert votre client e-mail pour envoyer la demande à feliniasite@gmail.com.",
       legal: "Association enregistrée en Italie · Refuge opérant en Tunisie",
     },
     footer: {
@@ -179,7 +196,15 @@ const translations = {
     contact: {
       title: "Get in touch",
       subtitle: "Let's talk – replies in EN/IT/FR.",
+      email: { label: "Email", address: CONTACT_EMAIL, aria: "Email Félinia" },
+      phones: [
+        { label: "Tunisia", display: "+216 56059142", href: "+21656059142" },
+        { label: "Italy", display: "+39 348 8450532", href: "+393488450532" },
+      ],
       form: { name: "Name", email: "Email", message: "Message", send: "Send" },
+      mailSubject: "New inquiry from the Félinia website",
+      mailBodyIntro: "You've received a new message from the Félinia contact form.",
+      mailClientPrompt: "We've opened your email client to send the request to feliniasite@gmail.com.",
       legal: "Association registered in Italy · Shelter operating in Tunisia",
     },
     footer: {
@@ -212,6 +237,31 @@ export default function FeliniaLanding() {
   const [lang, setLang] = useState("it");
   const t = useMemo(() => translations[lang], [lang]);
 
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = (formData.get("name") || "").toString().trim();
+    const email = (formData.get("email") || "").toString().trim();
+    const message = (formData.get("message") || "").toString().trim();
+
+    const lines = [
+      t.contact.mailBodyIntro,
+      "",
+      `${t.contact.form.name}: ${name || "-"}`,
+      `${t.contact.form.email}: ${email || "-"}`,
+      "",
+      message,
+    ];
+
+    const mailtoLink = `mailto:${t.contact.email.address}?subject=${encodeURIComponent(t.contact.mailSubject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+    window.location.href = mailtoLink;
+    e.currentTarget.reset();
+
+    setTimeout(() => {
+      alert(t.contact.mailClientPrompt);
+    }, 300);
+  };
+
   return (
     <div className="min-h-screen bg-[#F5EFE7] text-[#1E1E1E]">
       {/* Nav */}
@@ -229,7 +279,7 @@ export default function FeliniaLanding() {
             <a href="#help" className="hover:text-[#0C7463]">{t.nav.help}</a>
             <a href="#contact" className="hover:text-[#0C7463]">{t.nav.contact}</a>
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             <select
               aria-label="switch language"
               value={lang}
@@ -240,9 +290,6 @@ export default function FeliniaLanding() {
               <option value="fr">FR</option>
               <option value="en">EN</option>
             </select>
-            <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#0C7463] text-white px-3 py-1.5 text-sm hover:opacity-90">
-              {t.hero.ctaSecondary}
-            </a>
           </div>
         </div>
       </header>
@@ -460,35 +507,55 @@ export default function FeliniaLanding() {
             <div className="mt-6 rounded-2xl bg-white p-6 border border-black/5 text-sm">
               <div className="font-medium">Félinia – NGO</div>
               <div className="mt-1">{t.location}</div>
-              <div className="mt-2">✉️ hello@felinia.org</div>
-              <div className="">☎️ +216 00 000 000 (TN) · +39 000 000 000 (IT)</div>
+              <a
+                href={`mailto:${t.contact.email.address}`}
+                className="mt-2 inline-flex items-center gap-2 text-[#0C7463] hover:underline"
+                aria-label={t.contact.email.aria}
+              >
+                <span>✉️</span>
+                <span>{t.contact.email.address}</span>
+              </a>
+              <div className="mt-2 flex flex-col gap-1">
+                {t.contact.phones.map((phone) => (
+                  <a
+                    key={phone.href}
+                    href={`tel:${phone.href}`}
+                    className="hover:text-[#0C7463]"
+                    aria-label={`${phone.display} ${phone.label}`}
+                  >
+                    ☎️ {phone.display} ({phone.label})
+                  </a>
+                ))}
+              </div>
               <div className="mt-2 opacity-70">{t.contact.legal}</div>
             </div>
           </div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert(
-                lang === "it"
-                  ? "Grazie! Ti risponderemo al più presto."
-                  : lang === "fr"
-                  ? "Merci ! Nous vous répondrons au plus vite."
-                  : "Thanks! We'll get back to you soon."
-              );
-            }}
-            className="rounded-2xl bg-white p-6 border border-black/5"
-          >
+          <form onSubmit={handleContactSubmit} className="rounded-2xl bg-white p-6 border border-black/5">
             <label className="block text-sm">
               {t.contact.form.name}
-              <input className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40" required />
+              <input
+                name="name"
+                className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40"
+                required
+              />
             </label>
             <label className="block text-sm mt-4">
               {t.contact.form.email}
-              <input type="email" className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40" required />
+              <input
+                name="email"
+                type="email"
+                className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40"
+                required
+              />
             </label>
             <label className="block text-sm mt-4">
               {t.contact.form.message}
-              <textarea rows={4} className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40" required />
+              <textarea
+                name="message"
+                rows={4}
+                className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-[#0C7463]/40"
+                required
+              />
             </label>
             <button className="mt-5 rounded-xl bg-[#0C7463] text-white px-5 py-2.5 text-sm hover:opacity-90">{t.contact.form.send}</button>
           </form>
