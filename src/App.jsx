@@ -59,6 +59,10 @@ const translations = {
     contact: {
       title: "Contattaci",
       subtitle: "Parliamone – rispondiamo in IT/FR/EN.",
+      phones: [
+        { label: "Tunisia", display: "+216 56059142", href: "+21656059142" },
+        { label: "Italia", display: "+39 348 8450532", href: "+393488450532" },
+      ],
       form: { name: "Nome", email: "Email", message: "Messaggio", send: "Invia" },
       legal: "Iscrizione associazione in Italia · Rifugio operativo in Tunisia",
     },
@@ -119,6 +123,10 @@ const translations = {
     contact: {
       title: "Contactez‑nous",
       subtitle: "Échangeons – réponses en FR/IT/EN.",
+      phones: [
+        { label: "Tunisie", display: "+216 56059142", href: "+21656059142" },
+        { label: "Italie", display: "+39 348 8450532", href: "+393488450532" },
+      ],
       form: { name: "Nom", email: "Email", message: "Message", send: "Envoyer" },
       legal: "Association enregistrée en Italie · Refuge opérant en Tunisie",
     },
@@ -179,6 +187,10 @@ const translations = {
     contact: {
       title: "Get in touch",
       subtitle: "Let's talk – replies in EN/IT/FR.",
+      phones: [
+        { label: "Tunisia", display: "+216 56059142", href: "+21656059142" },
+        { label: "Italy", display: "+39 348 8450532", href: "+393488450532" },
+      ],
       form: { name: "Name", email: "Email", message: "Message", send: "Send" },
       legal: "Association registered in Italy · Shelter operating in Tunisia",
     },
@@ -229,7 +241,7 @@ export default function FeliniaLanding() {
             <a href="#help" className="hover:text-[#0C7463]">{t.nav.help}</a>
             <a href="#contact" className="hover:text-[#0C7463]">{t.nav.contact}</a>
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             <select
               aria-label="switch language"
               value={lang}
@@ -240,9 +252,6 @@ export default function FeliniaLanding() {
               <option value="fr">FR</option>
               <option value="en">EN</option>
             </select>
-            <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#0C7463] text-white px-3 py-1.5 text-sm hover:opacity-90">
-              {t.hero.ctaSecondary}
-            </a>
           </div>
         </div>
       </header>
@@ -461,7 +470,18 @@ export default function FeliniaLanding() {
               <div className="font-medium">Félinia – NGO</div>
               <div className="mt-1">{t.location}</div>
               <div className="mt-2">✉️ hello@felinia.org</div>
-              <div className="">☎️ +216 00 000 000 (TN) · +39 000 000 000 (IT)</div>
+              <div className="mt-2 flex flex-col gap-1">
+                {t.contact.phones.map((phone) => (
+                  <a
+                    key={phone.href}
+                    href={`tel:${phone.href}`}
+                    className="hover:text-[#0C7463]"
+                    aria-label={`${phone.display} ${phone.label}`}
+                  >
+                    ☎️ {phone.display} ({phone.label})
+                  </a>
+                ))}
+              </div>
               <div className="mt-2 opacity-70">{t.contact.legal}</div>
             </div>
           </div>
